@@ -1,0 +1,12 @@
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\bin\Debug\ReleasePackager.exe.config
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\bin\Debug\ReleasePackager.exe
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\bin\Debug\ReleasePackager.pdb
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\obj\Debug\ReleasePackager.csprojResolveAssemblyReference.cache
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\obj\Debug\ReleasePackager.Packer.resources
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\obj\Debug\ReleasePackager.Properties.Resources.resources
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\obj\Debug\ReleasePackager.csproj.GenerateResource.Cache
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\obj\Debug\ReleasePackager.exe
+F:\Games Work\Skyrim\ReleasePackager\ReleasePackager\obj\Debug\ReleasePackager.pdb
+F:\Games Work\Skyrim\Release Packager\ReleasePackager\bin\Debug\ReleasePackager.exe.config
+F:\Games Work\Skyrim\Release Packager\ReleasePackager\obj\Debug\ReleasePackager.exe
+F:\Games Work\Skyrim\Release Packager\ReleasePackager\obj\Debug\ReleasePackager.pdb
