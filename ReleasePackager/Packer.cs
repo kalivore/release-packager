@@ -3,6 +3,7 @@
     using System;
     using System.IO;
     using System.IO.Compression;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     public partial class Packer : Form
@@ -29,7 +30,7 @@
             InitializeComponent();
         }
 
-        private void btnGo_Click(object sender, EventArgs e)
+        private async void btnGo_Click(object sender, EventArgs e)
         {
             archiveName = tbArchiveName.Text + ".bsa";
             zipName = tbArchiveName.Text + ".zip";
@@ -40,37 +41,40 @@
             coreScriptsSourcePath = Path.Combine(tbGamePath.Text, "Data", "Scripts", "Source");
             archiverPath = Path.Combine(tbGamePath.Text, ArchiverFilename);
 
-            DoWorkNotOnUIThread();
-        }
-
-        private void DoWorkNotOnUIThread()
-        {
             outputDirRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
             tempDirRoot = GetTemporaryDirectory();
             tempDirData = Path.Combine(tempDirRoot, "Data");
             manifestPath = Path.Combine(tempDirRoot, ArchiveManifestFilename);
             zipSourceDir = Path.Combine(tempDirRoot, "ToZip");
 
-            CopyEsps();
-            CopySkse();
+            await DoWorkNotOnUIThread();
+        }
 
-            CopyScripts();
-            CompileScripts();
+        private async Task DoWorkNotOnUIThread()
+        {
+            await Task.Run(() =>
+            {
+                CopyEsps();
+                CopySkse();
 
-            CopyOtherAssets();
+                CopyScripts();
+                CompileScripts();
 
-            CopyArchiver();
-            CreateArchiveBuilder();
-            CreateArchiveManifest();
-            BuildArchiveManifest();
+                CopyOtherAssets();
 
-            CreateArchive();
+                CopyArchiver();
+                CreateArchiveBuilder();
+                CreateArchiveManifest();
+                BuildArchiveManifest();
 
-            CopyArchive();
+                CreateArchive();
 
-            CreateZip();
+                CopyArchive();
 
-            DeleteTemporaryDirectory();
+                CreateZip();
+
+                DeleteTemporaryDirectory();
+            });
 
             AddProgress("ALL DONE! :D");
         }
@@ -359,7 +363,17 @@
 
         private void AddProgress(string progress)
         {
-            tbProgress.AppendText(Environment.NewLine + progress);
+            if (this.tbProgress.InvokeRequired)
+            {
+                var d = new SetTextCallback(AddProgress);
+                this.Invoke(d, new object[] { progress });
+            }
+            else
+            {
+                tbProgress.AppendText(Environment.NewLine + progress);
+            }
         }
+
+        delegate void SetTextCallback(string text);
     }
 }
