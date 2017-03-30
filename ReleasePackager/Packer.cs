@@ -124,6 +124,10 @@
             {
                 papCompiler = System.Diagnostics.Process.Start(exePath, args);
                 papCompiler.WaitForExit();
+                if (papCompiler.ExitCode < 0)
+                {
+                    throw new Exception("Non-specific compile error");
+                }
             }
             catch(Exception ex)
             {
