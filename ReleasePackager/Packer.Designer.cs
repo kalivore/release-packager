@@ -45,11 +45,13 @@
             // 
             // tbSource
             // 
+            this.tbSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSource.Location = new System.Drawing.Point(83, 40);
             this.tbSource.Name = "tbSource";
             this.tbSource.Size = new System.Drawing.Size(396, 20);
             this.tbSource.TabIndex = 0;
-            this.tbSource.Text = "F:\\Games Work\\Skyrim\\Follower Potions\\mod";
+            this.tbSource.Text = "F:\\Games Work\\Skyrim\\Arrow Sheaves\\mod";
             // 
             // button1
             // 
@@ -72,6 +74,8 @@
             // 
             // tbGamePath
             // 
+            this.tbGamePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbGamePath.Location = new System.Drawing.Point(83, 69);
             this.tbGamePath.Name = "tbGamePath";
             this.tbGamePath.Size = new System.Drawing.Size(396, 20);
@@ -108,6 +112,8 @@
             // 
             // tbOutput
             // 
+            this.tbOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbOutput.Location = new System.Drawing.Point(83, 98);
             this.tbOutput.Name = "tbOutput";
             this.tbOutput.Size = new System.Drawing.Size(396, 20);
@@ -149,11 +155,13 @@
             // 
             // tbArchiveName
             // 
+            this.tbArchiveName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbArchiveName.Location = new System.Drawing.Point(83, 12);
             this.tbArchiveName.Name = "tbArchiveName";
             this.tbArchiveName.Size = new System.Drawing.Size(396, 20);
             this.tbArchiveName.TabIndex = 0;
-            this.tbArchiveName.Text = "Follower Potions";
+            this.tbArchiveName.Text = "Arrow Sheaves";
             // 
             // lblArchiveName
             // 

@@ -1,6 +1,7 @@
 ﻿namespace ReleasePackager
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
     using System.Threading.Tasks;
@@ -27,7 +28,9 @@
 
         public Packer()
         {
+            outputDirRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
             InitializeComponent();
+            tbOutput.Text = outputDirRoot;
         }
 
         private async void btnGo_Click(object sender, EventArgs e)
@@ -41,42 +44,52 @@
             coreScriptsSourcePath = Path.Combine(tbGamePath.Text, "Data", "Scripts", "Source");
             archiverPath = Path.Combine(tbGamePath.Text, ArchiverFilename);
 
-            outputDirRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
+            outputDirRoot = tbOutput.Text;
             tempDirRoot = GetTemporaryDirectory();
             tempDirData = Path.Combine(tempDirRoot, "Data");
             manifestPath = Path.Combine(tempDirRoot, ArchiveManifestFilename);
             zipSourceDir = Path.Combine(tempDirRoot, "ToZip");
+
+            tbProgress.Text = string.Empty;
 
             await DoWorkNotOnUIThread();
         }
 
         private async Task DoWorkNotOnUIThread()
         {
-            await Task.Run(() =>
+            try
             {
-                CopyEsps();
-                CopySkse();
+                await Task.Run(() =>
+                {
+                    CopyEsps();
+                    CopySkse();
 
-                CopyScripts();
-                CompileScripts();
+                    CopyScripts();
+                    CompileScripts();
 
-                CopyOtherAssets();
+                    CopyOtherAssets();
 
-                CopyArchiver();
-                CreateArchiveBuilder();
-                CreateArchiveManifest();
-                BuildArchiveManifest();
+                    CopyArchiver();
+                    CreateArchiveBuilder();
+                    CreateArchiveManifest();
+                    BuildArchiveManifest();
 
-                CreateArchive();
+                    CreateArchive();
 
-                CopyArchive();
+                    CopyArchive();
 
-                CreateZip();
+                    CreateZip();
 
-                DeleteTemporaryDirectory();
-            });
+                    DeleteTemporaryDirectory();
+                });
 
-            AddProgress("ALL DONE! :D");
+                AddProgress("ALL DONE! :D");
+            }
+            catch (Exception ex)
+            {
+                AddProgress("OH NOES! Problem while processing.. ");
+                AddProgress(ex.Message);
+            }
         }
 
         private void CopyEsps()
@@ -94,8 +107,8 @@
 
             var skseSource = Path.Combine(modSourcePath, "SKSE");
             var skseDest = Path.Combine(zipSourceDir, "SKSE");
-            CopyDirectory(skseSource, skseDest, true);
-            
+            CopyDirectory("SKSE", skseSource, skseDest, true);
+
             AddProgress("SKSE copied");
         }
 
@@ -119,37 +132,60 @@
             var compiledOutputPath = Path.Combine(tempDirData, "Scripts");
             string args = $"\"{scriptSourcePath}\" -a -f=\"{compilerFlagsPath}\" -i=\"{scriptSourcePath};{coreScriptsSourcePath}\" -o=\"{compiledOutputPath}\"";
 
-            System.Diagnostics.Process papCompiler;
+            var papCompiler = new Process();
+            papCompiler.StartInfo.FileName = exePath;
+            papCompiler.StartInfo.Arguments = args;
+            papCompiler.StartInfo.UseShellExecute = false;
+            papCompiler.StartInfo.CreateNoWindow = true;
+            papCompiler.StartInfo.RedirectStandardOutput = true;
+            papCompiler.StartInfo.RedirectStandardError = true;
+
+            string capturedOutput = string.Empty;
+            string capturedError = string.Empty;
             try
             {
-                papCompiler = System.Diagnostics.Process.Start(exePath, args);
+                AddProgress("------------ BEGIN PAPYRUS OUTPUT ------------");
+                papCompiler.Start();
+
+                var srOut = papCompiler.StandardOutput;
+                var srErr = papCompiler.StandardError;
+                capturedOutput = srOut.ReadToEnd();
+                capturedError = srErr.ReadToEnd();
+
                 papCompiler.WaitForExit();
+
                 if (papCompiler.ExitCode < 0)
                 {
                     throw new Exception("Non-specific compile error");
                 }
+
+                capturedOutput = capturedOutput.Replace("\n", Environment.NewLine);
+                AddProgress(capturedOutput);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 AddProgress("Script error! " + ex.Message);
+                capturedError = capturedError.Replace("\n", Environment.NewLine);
+                AddProgress(capturedError);
                 throw;
             }
 
-            AddProgress("All Scripts compiled");
+            AddProgress("------------ END PAPYRUS OUTPUT ------------");
+            AddProgress("Scripts compile complete");
         }
 
         private void CopyOtherAssets()
         {
             AddProgress("Copy Interface folder");
-            CopyDirectory(Path.Combine(modSourcePath, "Interface"), Path.Combine(tempDirData, "Interface"), true);
+            CopyDirectory("Interface", Path.Combine(modSourcePath, "Interface"), Path.Combine(tempDirData, "Interface"), true);
             AddProgress("Interface folder copied");
 
             AddProgress("Copy Seq folder");
-            CopyDirectory(Path.Combine(modSourcePath, "Seq"), Path.Combine(tempDirData, "Seq"), true);
+            CopyDirectory("Seq", Path.Combine(modSourcePath, "Seq"), Path.Combine(tempDirData, "Seq"), true);
             AddProgress("Seq folder copied");
 
             AddProgress("Copy Sound folder");
-            CopyDirectory(Path.Combine(modSourcePath, "Sound"), Path.Combine(tempDirData, "Sound"), true);
+            CopyDirectory("Sound", Path.Combine(modSourcePath, "Sound"), Path.Combine(tempDirData, "Sound"), true);
             AddProgress("Sound folder copied");
         }
 
@@ -192,20 +228,22 @@
 
         private void BuildArchiveManifest()
         {
-            AddToManifest(tempDirData, "Interface", true);
-            AddToManifest(tempDirData, "Seq", true);
-            AddToManifest(tempDirData, "Sound", true);
-            AddToManifest(tempDirData, "Scripts", true);
+            AddProgress("Build Archive Manifest");
+            AddToManifest("Interface", tempDirData, "Interface", true);
+            AddToManifest("Seq", tempDirData, "Seq", true);
+            AddToManifest("Sound", tempDirData, "Sound", true);
+            AddToManifest("Scripts", tempDirData, "Scripts", true);
+            AddProgress("Archive Manifest Complete");
         }
 
         private void CreateArchive()
         {
             var archiverPath = Path.Combine(tempDirRoot, ArchiverFilename);
-            var archiver = new System.Diagnostics.Process();
-            var startInfo = new System.Diagnostics.ProcessStartInfo
+            var archiver = new Process();
+            var startInfo = new ProcessStartInfo
             {
                 WorkingDirectory = tempDirRoot,
-                WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal,
+                WindowStyle = ProcessWindowStyle.Normal,
                 FileName = archiverPath,
                 Arguments = ArchiveBuilderFilename,
                 UseShellExecute = false
@@ -293,12 +331,12 @@
             }
         }
 
-        private void CopyDirectory(string sourceDirName, string destDirName, bool copySubDirs)
+        private void CopyDirectory(string dirDisplayName, string sourceDirName, string destDirName, bool copySubDirs)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
             if (!dir.Exists)
             {
-                AddProgress("No directory to copy");
+                AddProgress($"No {dirDisplayName} directory to copy");
                 return;
             }
 
@@ -323,20 +361,20 @@
                 foreach (DirectoryInfo subdir in dirs)
                 {
                     string temppath = Path.Combine(destDirName, subdir.Name);
-                    CopyDirectory(subdir.FullName, temppath, copySubDirs);
+                    CopyDirectory(subdir.Name, subdir.FullName, temppath, copySubDirs);
                 }
             }
 
             AddProgress($"Copied {sourceDirName}");
         }
 
-        private void AddToManifest(string rootName, string usedPath, bool recurse)
+        private void AddToManifest(string displayName, string rootName, string usedPath, bool recurse)
         {
             var sourceDirName = Path.Combine(rootName, usedPath);
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
             if (!dir.Exists)
             {
-                AddProgress("No directory to copy");
+                AddProgress($"No {displayName} directory for manifest");
                 return;
             }
 
@@ -359,7 +397,7 @@
                 foreach (DirectoryInfo subdir in dirs)
                 {
                     string temppath = Path.Combine(usedPath, subdir.Name);
-                    AddToManifest(rootName, temppath, recurse);
+                    AddToManifest(subdir.Name, rootName, temppath, recurse);
                 }
             }
 
