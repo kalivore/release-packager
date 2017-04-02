@@ -190,6 +190,7 @@
             this.Controls.Add(this.tbOutput);
             this.Controls.Add(this.tbArchiveName);
             this.Controls.Add(this.tbSource);
+            this.MinimumSize = new System.Drawing.Size(500, 600);
             this.Name = "Packer";
             this.Text = "Mod Release Packer";
             this.ResumeLayout(false);
