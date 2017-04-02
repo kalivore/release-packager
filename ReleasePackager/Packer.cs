@@ -1,6 +1,7 @@
 ﻿namespace ReleasePackager
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
     using System.IO;
     using System.IO.Compression;
@@ -26,11 +27,41 @@
         private const string ArchiveBuilderFilename = "ArchiveBuilder.txt";
         private const string ArchiveManifestFilename = "ArchiveManifest.txt";
 
+        private List<ModSetup> modPresets;
+
         public Packer()
         {
-            outputDirRoot = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
             InitializeComponent();
-            tbOutput.Text = outputDirRoot;
+            modPresets = new List<ModSetup>
+            {
+                new ModSetup(),
+                new ModSetup
+                {
+                    ArchiveName = "Arrow Sheaves",
+                    SourcePath = @"F:\Games Work\Skyrim\Arrow Sheaves\mod"
+                },
+                new ModSetup
+                {
+                    ArchiveName = "Follower Potions",
+                    SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
+                }
+            };
+            cbPresets.DisplayMember = "ArchiveName";
+            cbPresets.ValueMember = "ArchiveName";
+            cbPresets.DataSource = modPresets;
+            cbPresets.SelectedIndexChanged += CbPresets_SelectedIndexChanged;
+            tbOutput.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
+        }
+
+        private void CbPresets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var item = ((ComboBox)sender).SelectedItem as ModSetup;
+            tbArchiveName.Text = item?.ArchiveName;
+            tbSource.Text = item?.SourcePath;
+            if (item?.OutputPath != null)
+            {
+                tbOutput.Text = item?.OutputPath;
+            }
         }
 
         private async void btnGo_Click(object sender, EventArgs e)
