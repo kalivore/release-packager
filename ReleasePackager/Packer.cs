@@ -28,10 +28,12 @@
         private const string ArchiveManifestFilename = "ArchiveManifest.txt";
 
         private List<ModSetup> modPresets;
+        private List<FolderCopyConfig> otherFolders;
 
         public Packer()
         {
             InitializeComponent();
+
             modPresets = new List<ModSetup>
             {
                 new ModSetup(),
@@ -46,6 +48,17 @@
                     SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
                 }
             };
+
+            otherFolders = new List<FolderCopyConfig> {
+                new FolderCopyConfig { FolderName = "Interface", IncludeInBsa = true },
+                new FolderCopyConfig { FolderName = "Meshes", IncludeInBsa = true },
+                new FolderCopyConfig { FolderName = "Seq", IncludeInBsa = true },
+                new FolderCopyConfig { FolderName = "Sound", IncludeInBsa = true },
+                new FolderCopyConfig { FolderName = "SkyProc Patchers", IncludeInBsa = false },
+                new FolderCopyConfig { FolderName = "SKSE", IncludeInBsa = false },
+                new FolderCopyConfig { FolderName = "Textures", IncludeInBsa = true },
+            };
+
             cbPresets.DisplayMember = "ArchiveName";
             cbPresets.ValueMember = "ArchiveName";
             cbPresets.DataSource = modPresets;
@@ -93,7 +106,6 @@
                 await Task.Run(() =>
                 {
                     CopyEsps();
-                    CopySkse();
 
                     CopyScripts();
                     CompileScripts();
@@ -130,17 +142,6 @@
             CopyFiles(modSourcePath, zipSourceDir, "*.esp");
 
             AddProgress("All ESPs copied");
-        }
-
-        private void CopySkse()
-        {
-            AddProgress("Copy SKSE folder");
-
-            var skseSource = Path.Combine(modSourcePath, "SKSE");
-            var skseDest = Path.Combine(zipSourceDir, "SKSE");
-            CopyDirectory("SKSE", skseSource, skseDest, true);
-
-            AddProgress("SKSE copied");
         }
 
         private void CopyScripts()
@@ -207,17 +208,10 @@
 
         private void CopyOtherAssets()
         {
-            AddProgress("Copy Interface folder");
-            CopyDirectory("Interface", Path.Combine(modSourcePath, "Interface"), Path.Combine(tempDirData, "Interface"), true);
-            AddProgress("Interface folder copied");
-
-            AddProgress("Copy Seq folder");
-            CopyDirectory("Seq", Path.Combine(modSourcePath, "Seq"), Path.Combine(tempDirData, "Seq"), true);
-            AddProgress("Seq folder copied");
-
-            AddProgress("Copy Sound folder");
-            CopyDirectory("Sound", Path.Combine(modSourcePath, "Sound"), Path.Combine(tempDirData, "Sound"), true);
-            AddProgress("Sound folder copied");
+            foreach (var item in otherFolders)
+            {
+                CopyDirectoryStructure(item.FolderName, item.IncludeInBsa);
+            }
         }
 
         private void CopyArchiver()
@@ -362,6 +356,24 @@
             }
         }
 
+        private void CopyDirectoryStructure(string dirDisplayName, bool includeInBsa)
+        {
+            var sourceDirName = Path.Combine(modSourcePath, dirDisplayName);
+            var destDirName = Path.Combine(includeInBsa ? tempDirData : zipSourceDir, dirDisplayName);
+
+            DirectoryInfo dir = new DirectoryInfo(sourceDirName);
+            if (dir.Exists)
+            {
+                AddProgress($"Copy {dirDisplayName} folder structure");
+                CopyDirectory(dirDisplayName, sourceDirName, destDirName, true);
+                AddProgress($"{dirDisplayName} folder structure copied");
+            }
+            else
+            {
+                AddProgress($"No {dirDisplayName} directory to copy");
+            }
+        }
+
         private void CopyDirectory(string dirDisplayName, string sourceDirName, string destDirName, bool copySubDirs)
         {
             DirectoryInfo dir = new DirectoryInfo(sourceDirName);
@@ -448,5 +460,11 @@
         }
 
         delegate void SetTextCallback(string text);
+    }
+
+    public struct FolderCopyConfig
+    {
+        public string FolderName { get; set; }
+        public bool IncludeInBsa { get; set; }
     }
 }
