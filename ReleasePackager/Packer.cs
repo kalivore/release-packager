@@ -10,6 +10,7 @@
 
     public partial class Packer : Form
     {
+        private string mainEspName;
         private string archiveName;
         private string zipName;
         private string modSourcePath;
@@ -39,12 +40,16 @@
                 new ModSetup(),
                 new ModSetup
                 {
-                    ArchiveName = "Arrow Sheaves",
+                    ModName = "Arrow Sheaves",
+                    MainEspName = "ArrowSheaves",
+                    ZipName = "Arrow Sheaves",
                     SourcePath = @"F:\Games Work\Skyrim\Arrow Sheaves\mod"
                 },
                 new ModSetup
                 {
-                    ArchiveName = "Follower Potions",
+                    ModName = "Follower Potions",
+                    MainEspName = "FollowerPotions",
+                    ZipName = "Follower Potions",
                     SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
                 }
             };
@@ -59,8 +64,8 @@
                 new FolderCopyConfig { FolderName = "Textures", IncludeInBsa = true },
             };
 
-            cbPresets.DisplayMember = "ArchiveName";
-            cbPresets.ValueMember = "ArchiveName";
+            cbPresets.DisplayMember = "ModName";
+            cbPresets.ValueMember = "ModName";
             cbPresets.DataSource = modPresets;
             cbPresets.SelectedIndexChanged += CbPresets_SelectedIndexChanged;
             tbOutput.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
@@ -69,7 +74,8 @@
         private void CbPresets_SelectedIndexChanged(object sender, EventArgs e)
         {
             var item = ((ComboBox)sender).SelectedItem as ModSetup;
-            tbArchiveName.Text = item?.ArchiveName;
+            tbMainEspName.Text = item?.MainEspName;
+            tbZipName.Text = item?.ZipName;
             tbSource.Text = item?.SourcePath;
             if (item?.OutputPath != null)
             {
@@ -79,8 +85,9 @@
 
         private async void btnGo_Click(object sender, EventArgs e)
         {
-            archiveName = tbArchiveName.Text + ".bsa";
-            zipName = tbArchiveName.Text + ".zip";
+            mainEspName = tbMainEspName.Text;
+            archiveName = mainEspName + ".bsa";
+            zipName = tbZipName.Text + ".zip";
             modSourcePath = tbSource.Text;
 
             compilerPath = Path.Combine(tbGamePath.Text, "Papyrus Compiler", "PapyrusCompiler.exe");

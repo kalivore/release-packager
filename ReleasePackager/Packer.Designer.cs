@@ -39,10 +39,12 @@
             this.button3 = new System.Windows.Forms.Button();
             this.btnGo = new System.Windows.Forms.Button();
             this.tbProgress = new System.Windows.Forms.TextBox();
-            this.tbArchiveName = new System.Windows.Forms.TextBox();
-            this.lblArchiveName = new System.Windows.Forms.Label();
+            this.tbMainEspName = new System.Windows.Forms.TextBox();
+            this.lblMainEspName = new System.Windows.Forms.Label();
             this.lbPreset = new System.Windows.Forms.Label();
             this.cbPresets = new System.Windows.Forms.ComboBox();
+            this.lblZipName = new System.Windows.Forms.Label();
+            this.tbZipName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // tbSource
@@ -154,23 +156,23 @@
             this.tbProgress.TabIndex = 9;
             this.tbProgress.WordWrap = false;
             // 
-            // tbArchiveName
+            // tbMainEspName
             // 
-            this.tbArchiveName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbMainEspName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbArchiveName.Location = new System.Drawing.Point(83, 77);
-            this.tbArchiveName.Name = "tbArchiveName";
-            this.tbArchiveName.Size = new System.Drawing.Size(396, 20);
-            this.tbArchiveName.TabIndex = 1;
+            this.tbMainEspName.Location = new System.Drawing.Point(83, 77);
+            this.tbMainEspName.Name = "tbMainEspName";
+            this.tbMainEspName.Size = new System.Drawing.Size(151, 20);
+            this.tbMainEspName.TabIndex = 1;
             // 
-            // lblArchiveName
+            // lblMainEspName
             // 
-            this.lblArchiveName.AutoSize = true;
-            this.lblArchiveName.Location = new System.Drawing.Point(12, 80);
-            this.lblArchiveName.Name = "lblArchiveName";
-            this.lblArchiveName.Size = new System.Drawing.Size(43, 13);
-            this.lblArchiveName.TabIndex = 2;
-            this.lblArchiveName.Text = "Archive";
+            this.lblMainEspName.AutoSize = true;
+            this.lblMainEspName.Location = new System.Drawing.Point(12, 80);
+            this.lblMainEspName.Name = "lblMainEspName";
+            this.lblMainEspName.Size = new System.Drawing.Size(54, 13);
+            this.lblMainEspName.TabIndex = 2;
+            this.lblMainEspName.Text = "Main ESP";
             // 
             // lbPreset
             // 
@@ -189,6 +191,24 @@
             this.cbPresets.Size = new System.Drawing.Size(396, 21);
             this.cbPresets.TabIndex = 0;
             // 
+            // lblZipName
+            // 
+            this.lblZipName.AutoSize = true;
+            this.lblZipName.Location = new System.Drawing.Point(265, 80);
+            this.lblZipName.Name = "lblZipName";
+            this.lblZipName.Size = new System.Drawing.Size(57, 13);
+            this.lblZipName.TabIndex = 2;
+            this.lblZipName.Text = "Output Zip";
+            // 
+            // tbZipName
+            // 
+            this.tbZipName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbZipName.Location = new System.Drawing.Point(328, 77);
+            this.tbZipName.Name = "tbZipName";
+            this.tbZipName.Size = new System.Drawing.Size(151, 20);
+            this.tbZipName.TabIndex = 1;
+            // 
             // Packer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -203,11 +223,13 @@
             this.Controls.Add(this.lblData);
             this.Controls.Add(this.btnGo);
             this.Controls.Add(this.button2);
-            this.Controls.Add(this.lblArchiveName);
+            this.Controls.Add(this.lblZipName);
+            this.Controls.Add(this.lblMainEspName);
             this.Controls.Add(this.lblSource);
             this.Controls.Add(this.tbGamePath);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.tbArchiveName);
+            this.Controls.Add(this.tbZipName);
+            this.Controls.Add(this.tbMainEspName);
             this.Controls.Add(this.tbSource);
             this.MinimumSize = new System.Drawing.Size(500, 600);
             this.Name = "Packer";
@@ -230,10 +252,12 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.TextBox tbProgress;
-        private System.Windows.Forms.TextBox tbArchiveName;
-        private System.Windows.Forms.Label lblArchiveName;
+        private System.Windows.Forms.TextBox tbMainEspName;
+        private System.Windows.Forms.Label lblMainEspName;
         private System.Windows.Forms.Label lbPreset;
         private System.Windows.Forms.ComboBox cbPresets;
+        private System.Windows.Forms.Label lblZipName;
+        private System.Windows.Forms.TextBox tbZipName;
     }
 }
 
