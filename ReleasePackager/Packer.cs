@@ -1,13 +1,14 @@
-﻿namespace ReleasePackager
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.IO.Compression;
-    using System.Threading.Tasks;
-    using System.Windows.Forms;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Runtime.Serialization.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
+namespace ReleasePackager
+{
     public partial class Packer : Form
     {
         private string mainEspName;
@@ -28,31 +29,16 @@
         private const string ArchiveBuilderFilename = "ArchiveBuilder.txt";
         private const string ArchiveManifestFilename = "ArchiveManifest.txt";
 
-        private List<ModSetup> modPresets;
+        private string configFilePath;
+        private ModSetupCollection modPresets;
         private List<FolderCopyConfig> otherFolders;
 
         public Packer()
         {
             InitializeComponent();
 
-            modPresets = new List<ModSetup>
-            {
-                new ModSetup(),
-                new ModSetup
-                {
-                    ModName = "Arrow Sheaves",
-                    MainEspName = "ArrowSheaves",
-                    ZipName = "Arrow Sheaves",
-                    SourcePath = @"F:\Games Work\Skyrim\Arrow Sheaves\mod"
-                },
-                new ModSetup
-                {
-                    ModName = "Follower Potions",
-                    MainEspName = "FollowerPotions",
-                    ZipName = "Follower Potions",
-                    SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
-                }
-            };
+            configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+            LoadPresets();
 
             otherFolders = new List<FolderCopyConfig> {
                 new FolderCopyConfig { FolderName = "Interface", IncludeInBsa = true },
@@ -66,7 +52,7 @@
 
             cbPresets.DisplayMember = "ModName";
             cbPresets.ValueMember = "ModName";
-            cbPresets.DataSource = modPresets;
+            cbPresets.DataSource = modPresets.ModSetups;
             cbPresets.SelectedIndexChanged += CbPresets_SelectedIndexChanged;
             tbOutput.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
         }
@@ -467,9 +453,73 @@
         }
 
         delegate void SetTextCallback(string text);
+
+        private void LoadPresets()
+        {
+            var modSetupCollection = new ModSetupCollection();
+
+            using (var fileStream = File.OpenRead(configFilePath))
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ModSetupCollection));
+
+                using (var stream = new MemoryStream())
+                {
+                    fileStream.CopyTo(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    modSetupCollection = (ModSetupCollection)ser.ReadObject(stream);
+                }
+            }
+
+            modPresets = modSetupCollection;
+        }
+
+        private void SavePresets()
+        {
+            var modSetupCollection = new ModSetupCollection
+            {
+                ModSetups = new List<ModSetup>
+                {
+                    new ModSetup(),
+                    new ModSetup
+                    {
+                        ModName = "Arrow Sheaves",
+                        MainEspName = "ArrowSheaves",
+                        ZipName = "Arrow Sheaves",
+                        SourcePath = @"F:\Games Work\Skyrim\Arrow Sheaves\mod"
+                    },
+                    new ModSetup
+                    {
+                        ModName = "Poisoning Extended",
+                        MainEspName = "PoisoningExtended",
+                        ZipName = "Poisoning Extended",
+                        SourcePath = @"F:\Games Work\Skyrim\Poisoning Extended\mod"
+                    },
+                    new ModSetup
+                    {
+                        ModName = "Follower Potions",
+                        MainEspName = "FollowerPotions",
+                        ZipName = "Follower Potions",
+                        SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
+                    }
+                }
+            };
+
+            using (var stream = new MemoryStream())
+            {
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ModSetupCollection));
+                ser.WriteObject(stream, modPresets);
+
+                using (var fileStream = File.Create(configFilePath))
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                    stream.CopyTo(fileStream);
+                }
+            }
+        }
+
     }
 
-    public struct FolderCopyConfig
+        public struct FolderCopyConfig
     {
         public string FolderName { get; set; }
         public bool IncludeInBsa { get; set; }
