@@ -17,7 +17,7 @@ namespace ReleasePackager
         public string ModName { get; set; }
 
         [DataMember]
-        public string MainEspName { get; set; }
+        public int MainEspIndex { get; set; }
 
         [DataMember]
         public string ZipName { get; set; }

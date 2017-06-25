@@ -39,12 +39,12 @@
             this.button3 = new System.Windows.Forms.Button();
             this.btnGo = new System.Windows.Forms.Button();
             this.tbProgress = new System.Windows.Forms.TextBox();
-            this.tbMainEspName = new System.Windows.Forms.TextBox();
             this.lblMainEspName = new System.Windows.Forms.Label();
             this.lbPreset = new System.Windows.Forms.Label();
             this.cbPresets = new System.Windows.Forms.ComboBox();
             this.lblZipName = new System.Windows.Forms.Label();
             this.tbZipName = new System.Windows.Forms.TextBox();
+            this.cbMainEspName = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // tbSource
@@ -156,15 +156,6 @@
             this.tbProgress.TabIndex = 9;
             this.tbProgress.WordWrap = false;
             // 
-            // tbMainEspName
-            // 
-            this.tbMainEspName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbMainEspName.Location = new System.Drawing.Point(83, 77);
-            this.tbMainEspName.Name = "tbMainEspName";
-            this.tbMainEspName.Size = new System.Drawing.Size(151, 20);
-            this.tbMainEspName.TabIndex = 1;
-            // 
             // lblMainEspName
             // 
             this.lblMainEspName.AutoSize = true;
@@ -209,11 +200,25 @@
             this.tbZipName.Size = new System.Drawing.Size(151, 20);
             this.tbZipName.TabIndex = 1;
             // 
+            // cbMainEspName
+            // 
+            this.cbMainEspName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbMainEspName.DisplayMember = "Value";
+            this.cbMainEspName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMainEspName.FormattingEnabled = true;
+            this.cbMainEspName.Location = new System.Drawing.Point(83, 76);
+            this.cbMainEspName.Name = "cbMainEspName";
+            this.cbMainEspName.Size = new System.Drawing.Size(158, 21);
+            this.cbMainEspName.TabIndex = 10;
+            this.cbMainEspName.ValueMember = "Key";
+            // 
             // Packer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(572, 648);
+            this.Controls.Add(this.cbMainEspName);
             this.Controls.Add(this.cbPresets);
             this.Controls.Add(this.lbPreset);
             this.Controls.Add(this.lblOutput);
@@ -229,7 +234,6 @@
             this.Controls.Add(this.tbGamePath);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tbZipName);
-            this.Controls.Add(this.tbMainEspName);
             this.Controls.Add(this.tbSource);
             this.MinimumSize = new System.Drawing.Size(500, 600);
             this.Name = "Packer";
@@ -252,12 +256,12 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.TextBox tbProgress;
-        private System.Windows.Forms.TextBox tbMainEspName;
         private System.Windows.Forms.Label lblMainEspName;
         private System.Windows.Forms.Label lbPreset;
         private System.Windows.Forms.ComboBox cbPresets;
         private System.Windows.Forms.Label lblZipName;
         private System.Windows.Forms.TextBox tbZipName;
+        private System.Windows.Forms.ComboBox cbMainEspName;
     }
 }
 

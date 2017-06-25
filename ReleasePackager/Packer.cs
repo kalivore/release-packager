@@ -60,18 +60,19 @@ namespace ReleasePackager
         private void CbPresets_SelectedIndexChanged(object sender, EventArgs e)
         {
             var item = ((ComboBox)sender).SelectedItem as ModSetup;
-            tbMainEspName.Text = item?.MainEspName;
             tbZipName.Text = item?.ZipName;
             tbSource.Text = item?.SourcePath;
             if (item?.OutputPath != null)
             {
                 tbOutput.Text = item?.OutputPath;
             }
+            cbMainEspName.DataSource = PopulateEsps(tbSource.Text);
+            cbMainEspName.SelectedIndex = item?.MainEspIndex ?? 0;
         }
 
         private async void btnGo_Click(object sender, EventArgs e)
         {
-            mainEspName = tbMainEspName.Text;
+            mainEspName = cbMainEspName.SelectedText;
             archiveName = mainEspName + ".bsa";
             zipName = tbZipName.Text + ".zip";
             modSourcePath = tbSource.Text;
@@ -126,6 +127,29 @@ namespace ReleasePackager
                 AddProgress("OH NOES! Problem while processing.. ");
                 AddProgress(ex.Message);
             }
+        }
+
+        private List<KeyValuePair<int, string>> PopulateEsps(string sourceDirName)
+        {
+            var items = new List<KeyValuePair<int, string>>();
+            string[] files;
+            try
+            {
+                files = Directory.GetFiles(sourceDirName, "*.esp");
+            }
+            catch (Exception ex)
+            {
+                AddProgress("Error getting esp files: " + ex.Message);
+                return items;
+            }
+
+            for (int i = 0; i < files.Length; i++)
+            {
+                var filename = Path.GetFileNameWithoutExtension(files[i]);
+                items.Add(new KeyValuePair<int, string>(i, filename));
+            }
+
+            return items;
         }
 
         private void CopyEsps()
@@ -483,21 +507,21 @@ namespace ReleasePackager
                     new ModSetup
                     {
                         ModName = "Arrow Sheaves",
-                        MainEspName = "ArrowSheaves",
+                        MainEspIndex = 0,
                         ZipName = "Arrow Sheaves",
                         SourcePath = @"F:\Games Work\Skyrim\Arrow Sheaves\mod"
                     },
                     new ModSetup
                     {
                         ModName = "Poisoning Extended",
-                        MainEspName = "PoisoningExtended",
+                        MainEspIndex = 0,
                         ZipName = "Poisoning Extended",
                         SourcePath = @"F:\Games Work\Skyrim\Poisoning Extended\mod"
                     },
                     new ModSetup
                     {
                         ModName = "Follower Potions",
-                        MainEspName = "FollowerPotions",
+                        MainEspIndex = 0,
                         ZipName = "Follower Potions",
                         SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
                     }
