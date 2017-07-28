@@ -72,7 +72,7 @@ namespace ReleasePackager
 
         private async void btnGo_Click(object sender, EventArgs e)
         {
-            mainEspName = cbMainEspName.SelectedText;
+            mainEspName = cbMainEspName.Text;
             archiveName = mainEspName + ".bsa";
             zipName = tbZipName.Text + ".zip";
             modSourcePath = tbSource.Text;
