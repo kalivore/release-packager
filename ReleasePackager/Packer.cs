@@ -30,7 +30,7 @@ namespace ReleasePackager
         private const string ArchiveManifestFilename = "ArchiveManifest.txt";
 
         private string configFilePath;
-        private ModSetupCollection modPresets;
+        private ConfigCollection config;
         private List<FolderCopyConfig> otherFolders;
 
         public Packer()
@@ -38,6 +38,7 @@ namespace ReleasePackager
             InitializeComponent();
 
             configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+            //SavePresets();
             LoadPresets();
 
             otherFolders = new List<FolderCopyConfig> {
@@ -52,7 +53,7 @@ namespace ReleasePackager
 
             cbPresets.DisplayMember = "ModName";
             cbPresets.ValueMember = "ModName";
-            cbPresets.DataSource = modPresets.ModSetups;
+            cbPresets.DataSource = config.ModSetups;
             cbPresets.SelectedIndexChanged += CbPresets_SelectedIndexChanged;
             tbOutput.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
         }
@@ -62,9 +63,29 @@ namespace ReleasePackager
             var item = ((ComboBox)sender).SelectedItem as ModSetup;
             tbZipName.Text = item?.ZipName;
             tbSource.Text = item?.SourcePath;
-            if (item?.OutputPath != null)
+            if (item?.GameName != null)
             {
-                tbOutput.Text = item?.OutputPath;
+                GameSetup gameSetup = null;
+                foreach (var setup in config.GameSetups)
+                {
+                    if (setup.GameName == item?.GameName)
+                    {
+                        gameSetup = setup;
+                        break;
+                    }
+                }
+                if (gameSetup?.GamePath != null)
+                {
+                    tbGamePath.Text = gameSetup?.GamePath;
+                }
+                if (gameSetup?.ArchiverPath != null)
+                {
+                    tbArchiverPath.Text = gameSetup?.ArchiverPath;
+                }
+                if (gameSetup?.OutputPath != null)
+                {
+                    tbOutput.Text = gameSetup?.OutputPath;
+                }
             }
             cbMainEspName.DataSource = PopulateEsps(tbSource.Text);
             cbMainEspName.SelectedIndex = item?.MainEspIndex ?? 0;
@@ -80,7 +101,7 @@ namespace ReleasePackager
             compilerPath = Path.Combine(tbGamePath.Text, "Papyrus Compiler", "PapyrusCompiler.exe");
             compilerFlagsPath = Path.Combine(tbGamePath.Text, "Papyrus Compiler", "TESV_Papyrus_Flags.flg");
             coreScriptsSourcePath = Path.Combine(tbGamePath.Text, "Data", "Scripts", "Source");
-            archiverPath = Path.Combine(tbGamePath.Text, ArchiverFilename);
+            archiverPath = Path.Combine(tbArchiverPath.Text, ArchiverFilename);
 
             outputDirRoot = tbOutput.Text;
             tempDirRoot = GetTemporaryDirectory();
@@ -480,32 +501,50 @@ namespace ReleasePackager
 
         private void LoadPresets()
         {
-            var modSetupCollection = new ModSetupCollection();
+            var configCollection = new ConfigCollection();
 
             using (var fileStream = File.OpenRead(configFilePath))
             {
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ModSetupCollection));
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ConfigCollection));
 
                 using (var stream = new MemoryStream())
                 {
                     fileStream.CopyTo(stream);
                     stream.Seek(0, SeekOrigin.Begin);
-                    modSetupCollection = (ModSetupCollection)ser.ReadObject(stream);
+                    configCollection = (ConfigCollection)ser.ReadObject(stream);
                 }
             }
 
-            modPresets = modSetupCollection;
+            config = configCollection;
         }
 
         private void SavePresets()
         {
-            var modSetupCollection = new ModSetupCollection
+            var modSetupCollection = new ConfigCollection
             {
+                GameSetups = new List<GameSetup>
+                {
+                    new GameSetup
+                    {
+                        GameName = "Skyrim",
+                        GamePath = @"G:\Steam\SteamApps\common\Skyrim",
+                        ArchiverPath = @"G:\Steam\SteamApps\common\Skyrim",
+                        OutputPath = @"C:\Users\Ben\Desktop\packTest"
+                    },
+                    new GameSetup
+                    {
+                        GameName = "Skyrim SE",
+                        GamePath = @"H:\Steam\steamapps\common\Skyrim Special Edition",
+                        ArchiverPath = @"H:\Steam\steamapps\common\Skyrim Special Edition\Tools\Archive",
+                        OutputPath = @"C:\Users\Ben\Desktop\packTest"
+                    }
+                },
                 ModSetups = new List<ModSetup>
                 {
                     new ModSetup(),
                     new ModSetup
                     {
+                        GameName = "Skyrim",
                         ModName = "Arrow Sheaves",
                         MainEspIndex = 0,
                         ZipName = "Arrow Sheaves",
@@ -513,6 +552,7 @@ namespace ReleasePackager
                     },
                     new ModSetup
                     {
+                        GameName = "Skyrim",
                         ModName = "Poisoning Extended",
                         MainEspIndex = 0,
                         ZipName = "Poisoning Extended",
@@ -520,18 +560,27 @@ namespace ReleasePackager
                     },
                     new ModSetup
                     {
+                        GameName = "Skyrim",
                         ModName = "Follower Potions",
                         MainEspIndex = 0,
                         ZipName = "Follower Potions",
                         SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
+                    },
+                    new ModSetup
+                    {
+                        GameName = "Skyrim SE",
+                        ModName = "Poisoning Extended SE",
+                        MainEspIndex = 0,
+                        ZipName = "Poisoning Extended",
+                        SourcePath = @"F:\Games Work\Skyrim\Poisoning Extended SE\mod"
                     }
                 }
             };
 
             using (var stream = new MemoryStream())
             {
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ModSetupCollection));
-                ser.WriteObject(stream, modPresets);
+                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ConfigCollection));
+                ser.WriteObject(stream, config);
 
                 using (var fileStream = File.Create(configFilePath))
                 {
@@ -543,7 +592,7 @@ namespace ReleasePackager
 
     }
 
-        public struct FolderCopyConfig
+    public struct FolderCopyConfig
     {
         public string FolderName { get; set; }
         public bool IncludeInBsa { get; set; }

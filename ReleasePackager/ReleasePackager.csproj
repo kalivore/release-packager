@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ModSetup.cs" />
+    <Compile Include="ConfigCollection.cs" />
     <Compile Include="Packer.cs">
       <SubType>Form</SubType>
     </Compile>

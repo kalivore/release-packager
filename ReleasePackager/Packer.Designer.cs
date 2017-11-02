@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.tbSource = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSourcePath = new System.Windows.Forms.Button();
             this.lblSource = new System.Windows.Forms.Label();
             this.tbGamePath = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnGamePath = new System.Windows.Forms.Button();
             this.lblData = new System.Windows.Forms.Label();
             this.lblOutput = new System.Windows.Forms.Label();
             this.tbOutput = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btnOutputPath = new System.Windows.Forms.Button();
             this.btnGo = new System.Windows.Forms.Button();
             this.tbProgress = new System.Windows.Forms.TextBox();
             this.lblMainEspName = new System.Windows.Forms.Label();
@@ -45,6 +45,9 @@
             this.lblZipName = new System.Windows.Forms.Label();
             this.tbZipName = new System.Windows.Forms.TextBox();
             this.cbMainEspName = new System.Windows.Forms.ComboBox();
+            this.lblArchiver = new System.Windows.Forms.Label();
+            this.tbArchiverPath = new System.Windows.Forms.TextBox();
+            this.btnArchiverPath = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // tbSource
@@ -56,15 +59,15 @@
             this.tbSource.Size = new System.Drawing.Size(396, 20);
             this.tbSource.TabIndex = 2;
             // 
-            // button1
+            // btnSourcePath
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(485, 103);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnSourcePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSourcePath.Location = new System.Drawing.Point(485, 103);
+            this.btnSourcePath.Name = "btnSourcePath";
+            this.btnSourcePath.Size = new System.Drawing.Size(75, 23);
+            this.btnSourcePath.TabIndex = 3;
+            this.btnSourcePath.Text = "button1";
+            this.btnSourcePath.UseVisualStyleBackColor = true;
             // 
             // lblSource
             // 
@@ -85,15 +88,15 @@
             this.tbGamePath.TabIndex = 6;
             this.tbGamePath.Text = "G:\\Steam\\SteamApps\\common\\Skyrim";
             // 
-            // button2
+            // btnGamePath
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(485, 158);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "button1";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnGamePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnGamePath.Location = new System.Drawing.Point(485, 158);
+            this.btnGamePath.Name = "btnGamePath";
+            this.btnGamePath.Size = new System.Drawing.Size(75, 23);
+            this.btnGamePath.TabIndex = 7;
+            this.btnGamePath.Text = "button1";
+            this.btnGamePath.UseVisualStyleBackColor = true;
             // 
             // lblData
             // 
@@ -122,15 +125,15 @@
             this.tbOutput.Size = new System.Drawing.Size(396, 20);
             this.tbOutput.TabIndex = 4;
             // 
-            // button3
+            // btnOutputPath
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(485, 129);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 5;
-            this.button3.Text = "button1";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnOutputPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOutputPath.Location = new System.Drawing.Point(485, 129);
+            this.btnOutputPath.Name = "btnOutputPath";
+            this.btnOutputPath.Size = new System.Drawing.Size(75, 23);
+            this.btnOutputPath.TabIndex = 5;
+            this.btnOutputPath.Text = "button1";
+            this.btnOutputPath.UseVisualStyleBackColor = true;
             // 
             // btnGo
             // 
@@ -213,6 +216,35 @@
             this.cbMainEspName.TabIndex = 10;
             this.cbMainEspName.ValueMember = "Key";
             // 
+            // lblArchiver
+            // 
+            this.lblArchiver.AutoSize = true;
+            this.lblArchiver.Location = new System.Drawing.Point(12, 189);
+            this.lblArchiver.Name = "lblArchiver";
+            this.lblArchiver.Size = new System.Drawing.Size(70, 13);
+            this.lblArchiver.TabIndex = 2;
+            this.lblArchiver.Text = "Archiver path";
+            // 
+            // tbArchiverPath
+            // 
+            this.tbArchiverPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbArchiverPath.Location = new System.Drawing.Point(83, 186);
+            this.tbArchiverPath.Name = "tbArchiverPath";
+            this.tbArchiverPath.Size = new System.Drawing.Size(396, 20);
+            this.tbArchiverPath.TabIndex = 6;
+            this.tbArchiverPath.Text = "G:\\Steam\\SteamApps\\common\\Skyrim\r\n";
+            // 
+            // btnArchiverPath
+            // 
+            this.btnArchiverPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnArchiverPath.Location = new System.Drawing.Point(485, 184);
+            this.btnArchiverPath.Name = "btnArchiverPath";
+            this.btnArchiverPath.Size = new System.Drawing.Size(75, 23);
+            this.btnArchiverPath.TabIndex = 7;
+            this.btnArchiverPath.Text = "button1";
+            this.btnArchiverPath.UseVisualStyleBackColor = true;
+            // 
             // Packer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -222,17 +254,20 @@
             this.Controls.Add(this.cbPresets);
             this.Controls.Add(this.lbPreset);
             this.Controls.Add(this.lblOutput);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.btnOutputPath);
             this.Controls.Add(this.tbOutput);
             this.Controls.Add(this.tbProgress);
+            this.Controls.Add(this.lblArchiver);
             this.Controls.Add(this.lblData);
             this.Controls.Add(this.btnGo);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btnArchiverPath);
+            this.Controls.Add(this.btnGamePath);
             this.Controls.Add(this.lblZipName);
             this.Controls.Add(this.lblMainEspName);
             this.Controls.Add(this.lblSource);
+            this.Controls.Add(this.tbArchiverPath);
             this.Controls.Add(this.tbGamePath);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnSourcePath);
             this.Controls.Add(this.tbZipName);
             this.Controls.Add(this.tbSource);
             this.MinimumSize = new System.Drawing.Size(500, 600);
@@ -246,14 +281,14 @@
         #endregion
 
         private System.Windows.Forms.TextBox tbSource;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSourcePath;
         private System.Windows.Forms.Label lblSource;
         private System.Windows.Forms.TextBox tbGamePath;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnGamePath;
         private System.Windows.Forms.Label lblData;
         private System.Windows.Forms.Label lblOutput;
         private System.Windows.Forms.TextBox tbOutput;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btnOutputPath;
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.TextBox tbProgress;
         private System.Windows.Forms.Label lblMainEspName;
@@ -262,6 +297,9 @@
         private System.Windows.Forms.Label lblZipName;
         private System.Windows.Forms.TextBox tbZipName;
         private System.Windows.Forms.ComboBox cbMainEspName;
+        private System.Windows.Forms.Label lblArchiver;
+        private System.Windows.Forms.TextBox tbArchiverPath;
+        private System.Windows.Forms.Button btnArchiverPath;
     }
 }
 
