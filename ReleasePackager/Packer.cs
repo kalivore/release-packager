@@ -33,6 +33,11 @@ namespace ReleasePackager
         private ConfigCollection config;
         private List<FolderCopyConfig> otherFolders;
 
+        private int manifestFilesTotal;
+
+        private int scriptsTotal;
+        private int scriptsDone;
+
         public Packer()
         {
             InitializeComponent();
@@ -91,6 +96,42 @@ namespace ReleasePackager
             cbMainEspName.SelectedIndex = item?.MainEspIndex ?? 0;
         }
 
+        private void btnConfig_Click(object sender, EventArgs e)
+        {
+            var config = new Config();
+            var dr = config.ShowDialog();
+            config.Dispose();
+        }
+
+        private void btnSourcePath_Click(object sender, EventArgs e)
+        {
+            pathSelect(tbSource);
+        }
+        private void btnOutputPath_Click(object sender, EventArgs e)
+        {
+            pathSelect(tbOutput);
+        }
+        private void btnGamePath_Click(object sender, EventArgs e)
+        {
+            pathSelect(tbGamePath);
+        }
+        private void btnArchiverPath_Click(object sender, EventArgs e)
+        {
+            pathSelect(tbArchiverPath);
+        }
+
+        private void pathSelect(TextBox tb)
+        {
+            fbPath.SelectedPath = tb.Text;
+            var dr = fbPath.ShowDialog();
+            if (dr == DialogResult.OK)
+            {
+                tb.Text = fbPath.SelectedPath;
+            }
+        }
+
+
+
         private async void btnGo_Click(object sender, EventArgs e)
         {
             mainEspName = cbMainEspName.Text;
@@ -111,8 +152,14 @@ namespace ReleasePackager
 
             tbProgress.Text = string.Empty;
 
+            scriptsDone = 0;
+            scriptsTotal = 0;
+            lblProgressScripts.Text = string.Empty;
+            pbScripts.Value = 0;
+
             await DoWorkNotOnUIThread();
         }
+
 
         private async Task DoWorkNotOnUIThread()
         {
@@ -188,14 +235,22 @@ namespace ReleasePackager
 
             var sourcePath = Path.Combine(modSourcePath, "Scripts", "Source");
             var destPath = Path.Combine(tempDirData, "Scripts", "Source");
-            CopyFiles(sourcePath, destPath, "*.psc");
+            CopyFiles(sourcePath, destPath, "*.psc", () => { return scriptsTotal++; });
 
             AddProgress("All Scripts source copied");
         }
 
         private void CompileScripts()
         {
+            if (scriptsTotal == 0)
+            {
+                AddProgress("No Scripts to Compile!");
+                return;
+            }
+
             AddProgress("Compile Scripts");
+            UpdateScriptProgress($"{scriptsDone}/{scriptsTotal}");
+            UpdateScriptBar(scriptsDone, scriptsTotal);
 
             var exePath = $"\"{compilerPath}\"";
             var scriptSourcePath = Path.Combine(tempDirData, "Scripts", "Source");
@@ -208,29 +263,26 @@ namespace ReleasePackager
             papCompiler.StartInfo.UseShellExecute = false;
             papCompiler.StartInfo.CreateNoWindow = true;
             papCompiler.StartInfo.RedirectStandardOutput = true;
+            papCompiler.OutputDataReceived += new DataReceivedEventHandler(CompilerOutputHandler);
             papCompiler.StartInfo.RedirectStandardError = true;
 
-            string capturedOutput = string.Empty;
             string capturedError = string.Empty;
             try
             {
                 AddProgress("------------ BEGIN PAPYRUS OUTPUT ------------");
                 papCompiler.Start();
-
-                var srOut = papCompiler.StandardOutput;
-                var srErr = papCompiler.StandardError;
-                capturedOutput = srOut.ReadToEnd();
-                capturedError = srErr.ReadToEnd();
+                papCompiler.BeginOutputReadLine();
 
                 papCompiler.WaitForExit();
+
+                var srErr = papCompiler.StandardError;
+                capturedError = srErr.ReadToEnd();
 
                 if (papCompiler.ExitCode < 0)
                 {
                     throw new Exception("Non-specific compile error");
                 }
 
-                capturedOutput = capturedOutput.Replace("\n", Environment.NewLine);
-                AddProgress(capturedOutput);
             }
             catch (Exception ex)
             {
@@ -239,9 +291,25 @@ namespace ReleasePackager
                 AddProgress(capturedError);
                 throw;
             }
+            finally
+            {
+                AddProgress("------------ END PAPYRUS OUTPUT ------------");
+                papCompiler.Dispose();
+            }
 
-            AddProgress("------------ END PAPYRUS OUTPUT ------------");
             AddProgress("Scripts compile complete");
+        }
+
+        private void CompilerOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        {
+            var text = outLine.Data?.Replace("\n", Environment.NewLine);
+            AddProgress(text);
+            if (text?.Trim() == "Assembly succeeded")
+            {
+                scriptsDone++;
+                UpdateScriptProgress($"{scriptsDone}/{scriptsTotal}");
+                UpdateScriptBar(scriptsDone, scriptsTotal);
+            }
         }
 
         private void CopyOtherAssets()
@@ -301,6 +369,12 @@ namespace ReleasePackager
 
         private void CreateArchive()
         {
+            if (manifestFilesTotal == 0)
+            {
+                AddProgress("No files to put in BSA!");
+                return;
+            }
+
             var archiverPath = Path.Combine(tempDirRoot, ArchiverFilename);
             var archiver = new Process();
             var startInfo = new ProcessStartInfo
@@ -328,8 +402,17 @@ namespace ReleasePackager
 
         private void CopyArchive()
         {
-            var archivePath = Path.Combine(tempDirRoot, archiveName);
-            File.Copy(archivePath, Path.Combine(zipSourceDir, archiveName), true);
+            try
+            {
+
+                var archivePath = Path.Combine(tempDirRoot, archiveName);
+                File.Copy(archivePath, Path.Combine(zipSourceDir, archiveName), true);
+            }
+            catch (Exception ex)
+            {
+                AddProgress("Error copying BSA! " + ex.Message);
+                throw;
+            }
         }
 
         private void CreateZip()
@@ -368,7 +451,7 @@ namespace ReleasePackager
             return tempDirectory;
         }
 
-        private void CopyFiles(string sourceDirName, string destDirName, string filePattern)
+        private void CopyFiles(string sourceDirName, string destDirName, string filePattern, Func<int> copyCompleteCallback = null)
         {
             if (!Directory.Exists(destDirName))
             {
@@ -390,6 +473,10 @@ namespace ReleasePackager
             {
                 var filename = Path.GetFileName(files[i]);
                 File.Copy(Path.Combine(sourceDirName, filename), Path.Combine(destDirName, filename), true);
+                if (copyCompleteCallback != null)
+                {
+                    copyCompleteCallback();
+                }
                 AddProgress($"Copied {filename}");
             }
         }
@@ -468,6 +555,7 @@ namespace ReleasePackager
                     string filepath = Path.Combine(usedPath, file.Name);
                     sw.WriteLine(filepath);
                     AddProgress($"Added {filepath} to manifest");
+                    manifestFilesTotal++;
                 }
             }
 
@@ -483,21 +571,6 @@ namespace ReleasePackager
             }
 
         }
-
-        private void AddProgress(string progress)
-        {
-            if (this.tbProgress.InvokeRequired)
-            {
-                var d = new SetTextCallback(AddProgress);
-                this.Invoke(d, new object[] { progress });
-            }
-            else
-            {
-                tbProgress.AppendText(Environment.NewLine + progress);
-            }
-        }
-
-        delegate void SetTextCallback(string text);
 
         private void LoadPresets()
         {
@@ -587,6 +660,61 @@ namespace ReleasePackager
                     stream.Seek(0, SeekOrigin.Begin);
                     stream.CopyTo(fileStream);
                 }
+            }
+        }
+
+
+        delegate void SetTextCallback(string text);
+
+        private void AddProgress(string progress)
+        {
+            if (this.tbProgress.InvokeRequired)
+            {
+                var d = new SetTextCallback(AddProgress);
+                this.Invoke(d, new object[] { progress });
+            }
+            else
+            {
+                tbProgress.AppendText(Environment.NewLine + progress);
+            }
+        }
+
+        private void UpdateScriptProgress(string progress)
+        {
+            if (this.lblProgressScripts.InvokeRequired)
+            {
+                var d = new SetTextCallback(UpdateScriptProgress);
+                this.Invoke(d, new object[] { progress });
+            }
+            else
+            {
+                lblProgressScripts.Text = progress;
+            }
+        }
+
+        delegate void SetProgressBarCallback(int val, int max);
+
+        private void UpdateScriptBar(int val, int max)
+        {
+            if (this.pbScripts.InvokeRequired)
+            {
+                var d = new SetProgressBarCallback(UpdateScriptBar);
+                this.Invoke(d, new object[] { val, max });
+            }
+            else
+            {
+                pbScripts.Maximum = max;
+                if (val == max)
+                {
+                    pbScripts.Maximum = max + 1;
+                    pbScripts.Value = val + 1;
+                    pbScripts.Maximum = max;
+                }
+                else
+                { 
+                    pbScripts.Value = val + 1;
+                }
+                pbScripts.Value = val;
             }
         }
 

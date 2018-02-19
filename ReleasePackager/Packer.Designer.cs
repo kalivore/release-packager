@@ -48,6 +48,10 @@
             this.lblArchiver = new System.Windows.Forms.Label();
             this.tbArchiverPath = new System.Windows.Forms.TextBox();
             this.btnArchiverPath = new System.Windows.Forms.Button();
+            this.fbPath = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnConfig = new System.Windows.Forms.Button();
+            this.pbScripts = new System.Windows.Forms.ProgressBar();
+            this.lblProgressScripts = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // tbSource
@@ -56,18 +60,19 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbSource.Location = new System.Drawing.Point(83, 105);
             this.tbSource.Name = "tbSource";
-            this.tbSource.Size = new System.Drawing.Size(396, 20);
+            this.tbSource.Size = new System.Drawing.Size(447, 20);
             this.tbSource.TabIndex = 2;
             // 
             // btnSourcePath
             // 
             this.btnSourcePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSourcePath.Location = new System.Drawing.Point(485, 103);
+            this.btnSourcePath.Location = new System.Drawing.Point(536, 103);
             this.btnSourcePath.Name = "btnSourcePath";
-            this.btnSourcePath.Size = new System.Drawing.Size(75, 23);
+            this.btnSourcePath.Size = new System.Drawing.Size(24, 23);
             this.btnSourcePath.TabIndex = 3;
-            this.btnSourcePath.Text = "button1";
+            this.btnSourcePath.Text = "...";
             this.btnSourcePath.UseVisualStyleBackColor = true;
+            this.btnSourcePath.Click += new System.EventHandler(this.btnSourcePath_Click);
             // 
             // lblSource
             // 
@@ -84,19 +89,20 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbGamePath.Location = new System.Drawing.Point(83, 160);
             this.tbGamePath.Name = "tbGamePath";
-            this.tbGamePath.Size = new System.Drawing.Size(396, 20);
+            this.tbGamePath.Size = new System.Drawing.Size(447, 20);
             this.tbGamePath.TabIndex = 6;
             this.tbGamePath.Text = "G:\\Steam\\SteamApps\\common\\Skyrim";
             // 
             // btnGamePath
             // 
             this.btnGamePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGamePath.Location = new System.Drawing.Point(485, 158);
+            this.btnGamePath.Location = new System.Drawing.Point(536, 158);
             this.btnGamePath.Name = "btnGamePath";
-            this.btnGamePath.Size = new System.Drawing.Size(75, 23);
+            this.btnGamePath.Size = new System.Drawing.Size(24, 23);
             this.btnGamePath.TabIndex = 7;
-            this.btnGamePath.Text = "button1";
+            this.btnGamePath.Text = "...";
             this.btnGamePath.UseVisualStyleBackColor = true;
+            this.btnGamePath.Click += new System.EventHandler(this.btnGamePath_Click);
             // 
             // lblData
             // 
@@ -122,18 +128,19 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbOutput.Location = new System.Drawing.Point(83, 131);
             this.tbOutput.Name = "tbOutput";
-            this.tbOutput.Size = new System.Drawing.Size(396, 20);
+            this.tbOutput.Size = new System.Drawing.Size(447, 20);
             this.tbOutput.TabIndex = 4;
             // 
             // btnOutputPath
             // 
             this.btnOutputPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOutputPath.Location = new System.Drawing.Point(485, 129);
+            this.btnOutputPath.Location = new System.Drawing.Point(536, 129);
             this.btnOutputPath.Name = "btnOutputPath";
-            this.btnOutputPath.Size = new System.Drawing.Size(75, 23);
+            this.btnOutputPath.Size = new System.Drawing.Size(24, 23);
             this.btnOutputPath.TabIndex = 5;
-            this.btnOutputPath.Text = "button1";
+            this.btnOutputPath.Text = "...";
             this.btnOutputPath.UseVisualStyleBackColor = true;
+            this.btnOutputPath.Click += new System.EventHandler(this.btnOutputPath_Click);
             // 
             // btnGo
             // 
@@ -151,11 +158,11 @@
             this.tbProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbProgress.Location = new System.Drawing.Point(15, 261);
+            this.tbProgress.Location = new System.Drawing.Point(15, 311);
             this.tbProgress.Multiline = true;
             this.tbProgress.Name = "tbProgress";
             this.tbProgress.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbProgress.Size = new System.Drawing.Size(545, 375);
+            this.tbProgress.Size = new System.Drawing.Size(545, 357);
             this.tbProgress.TabIndex = 9;
             this.tbProgress.WordWrap = false;
             // 
@@ -182,13 +189,13 @@
             this.cbPresets.FormattingEnabled = true;
             this.cbPresets.Location = new System.Drawing.Point(83, 21);
             this.cbPresets.Name = "cbPresets";
-            this.cbPresets.Size = new System.Drawing.Size(396, 21);
+            this.cbPresets.Size = new System.Drawing.Size(363, 21);
             this.cbPresets.TabIndex = 0;
             // 
             // lblZipName
             // 
             this.lblZipName.AutoSize = true;
-            this.lblZipName.Location = new System.Drawing.Point(265, 80);
+            this.lblZipName.Location = new System.Drawing.Point(291, 79);
             this.lblZipName.Name = "lblZipName";
             this.lblZipName.Size = new System.Drawing.Size(57, 13);
             this.lblZipName.TabIndex = 2;
@@ -198,9 +205,9 @@
             // 
             this.tbZipName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbZipName.Location = new System.Drawing.Point(328, 77);
+            this.tbZipName.Location = new System.Drawing.Point(354, 77);
             this.tbZipName.Name = "tbZipName";
-            this.tbZipName.Size = new System.Drawing.Size(151, 20);
+            this.tbZipName.Size = new System.Drawing.Size(176, 20);
             this.tbZipName.TabIndex = 1;
             // 
             // cbMainEspName
@@ -212,7 +219,7 @@
             this.cbMainEspName.FormattingEnabled = true;
             this.cbMainEspName.Location = new System.Drawing.Point(83, 76);
             this.cbMainEspName.Name = "cbMainEspName";
-            this.cbMainEspName.Size = new System.Drawing.Size(158, 21);
+            this.cbMainEspName.Size = new System.Drawing.Size(186, 21);
             this.cbMainEspName.TabIndex = 10;
             this.cbMainEspName.ValueMember = "Key";
             // 
@@ -231,25 +238,59 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbArchiverPath.Location = new System.Drawing.Point(83, 186);
             this.tbArchiverPath.Name = "tbArchiverPath";
-            this.tbArchiverPath.Size = new System.Drawing.Size(396, 20);
+            this.tbArchiverPath.Size = new System.Drawing.Size(447, 20);
             this.tbArchiverPath.TabIndex = 6;
-            this.tbArchiverPath.Text = "G:\\Steam\\SteamApps\\common\\Skyrim\r\n";
+            this.tbArchiverPath.Text = "G:\\Steam\\SteamApps\\common\\Skyrim";
             // 
             // btnArchiverPath
             // 
             this.btnArchiverPath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnArchiverPath.Location = new System.Drawing.Point(485, 184);
+            this.btnArchiverPath.Location = new System.Drawing.Point(536, 184);
             this.btnArchiverPath.Name = "btnArchiverPath";
-            this.btnArchiverPath.Size = new System.Drawing.Size(75, 23);
+            this.btnArchiverPath.Size = new System.Drawing.Size(24, 23);
             this.btnArchiverPath.TabIndex = 7;
-            this.btnArchiverPath.Text = "button1";
+            this.btnArchiverPath.Text = "...";
             this.btnArchiverPath.UseVisualStyleBackColor = true;
+            this.btnArchiverPath.Click += new System.EventHandler(this.btnArchiverPath_Click);
+            // 
+            // btnConfig
+            // 
+            this.btnConfig.Location = new System.Drawing.Point(452, 19);
+            this.btnConfig.Name = "btnConfig";
+            this.btnConfig.Size = new System.Drawing.Size(108, 23);
+            this.btnConfig.TabIndex = 11;
+            this.btnConfig.Text = "config";
+            this.btnConfig.UseVisualStyleBackColor = true;
+            this.btnConfig.Click += new System.EventHandler(this.btnConfig_Click);
+            // 
+            // pbScripts
+            // 
+            this.pbScripts.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbScripts.Location = new System.Drawing.Point(15, 261);
+            this.pbScripts.Name = "pbScripts";
+            this.pbScripts.Size = new System.Drawing.Size(512, 23);
+            this.pbScripts.Step = 1;
+            this.pbScripts.TabIndex = 12;
+            // 
+            // lblProgressScripts
+            // 
+            this.lblProgressScripts.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblProgressScripts.AutoSize = true;
+            this.lblProgressScripts.Location = new System.Drawing.Point(533, 267);
+            this.lblProgressScripts.Name = "lblProgressScripts";
+            this.lblProgressScripts.Size = new System.Drawing.Size(0, 13);
+            this.lblProgressScripts.TabIndex = 13;
+            this.lblProgressScripts.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Packer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(572, 648);
+            this.ClientSize = new System.Drawing.Size(572, 680);
+            this.Controls.Add(this.lblProgressScripts);
+            this.Controls.Add(this.pbScripts);
+            this.Controls.Add(this.btnConfig);
             this.Controls.Add(this.cbMainEspName);
             this.Controls.Add(this.cbPresets);
             this.Controls.Add(this.lbPreset);
@@ -300,6 +341,10 @@
         private System.Windows.Forms.Label lblArchiver;
         private System.Windows.Forms.TextBox tbArchiverPath;
         private System.Windows.Forms.Button btnArchiverPath;
+        private System.Windows.Forms.FolderBrowserDialog fbPath;
+        private System.Windows.Forms.Button btnConfig;
+        private System.Windows.Forms.ProgressBar pbScripts;
+        private System.Windows.Forms.Label lblProgressScripts;
     }
 }
 
