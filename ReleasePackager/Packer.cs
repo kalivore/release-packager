@@ -103,22 +103,10 @@ namespace ReleasePackager
             config.Dispose();
         }
 
-        private void btnSourcePath_Click(object sender, EventArgs e)
-        {
-            pathSelect(tbSource);
-        }
-        private void btnOutputPath_Click(object sender, EventArgs e)
-        {
-            pathSelect(tbOutput);
-        }
-        private void btnGamePath_Click(object sender, EventArgs e)
-        {
-            pathSelect(tbGamePath);
-        }
-        private void btnArchiverPath_Click(object sender, EventArgs e)
-        {
-            pathSelect(tbArchiverPath);
-        }
+        private void btnSourcePath_Click(object sender, EventArgs e) => pathSelect(tbSource);
+        private void btnOutputPath_Click(object sender, EventArgs e) => pathSelect(tbOutput);
+        private void btnGamePath_Click(object sender, EventArgs e) => pathSelect(tbGamePath);
+        private void btnArchiverPath_Click(object sender, EventArgs e) => pathSelect(tbArchiverPath);
 
         private void pathSelect(TextBox tb)
         {
@@ -129,8 +117,7 @@ namespace ReleasePackager
                 tb.Text = fbPath.SelectedPath;
             }
         }
-
-
+        
 
         private async void btnGo_Click(object sender, EventArgs e)
         {
@@ -473,10 +460,7 @@ namespace ReleasePackager
             {
                 var filename = Path.GetFileName(files[i]);
                 File.Copy(Path.Combine(sourceDirName, filename), Path.Combine(destDirName, filename), true);
-                if (copyCompleteCallback != null)
-                {
-                    copyCompleteCallback();
-                }
+                copyCompleteCallback?.Invoke();
                 AddProgress($"Copied {filename}");
             }
         }
