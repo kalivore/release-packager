@@ -93,7 +93,7 @@ namespace ReleasePackager
                 }
             }
             cbMainEspName.DataSource = PopulateEsps(tbSource.Text);
-            cbMainEspName.SelectedIndex = item?.MainEspIndex ?? 0;
+            cbMainEspName.SelectedIndex = item.MainEspIndex <= (cbMainEspName.Items.Count - 1) ? item.MainEspIndex : -1;
         }
 
         private void btnConfig_Click(object sender, EventArgs e)
