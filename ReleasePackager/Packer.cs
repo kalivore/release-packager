@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -29,8 +30,7 @@ namespace ReleasePackager
         private const string ArchiveBuilderFilename = "ArchiveBuilder.txt";
         private const string ArchiveManifestFilename = "ArchiveManifest.txt";
 
-        private string configFilePath;
-        private ConfigCollection config;
+        private Config configDialog;
         private List<FolderCopyConfig> otherFolders;
 
         private int manifestFilesTotal;
@@ -42,9 +42,16 @@ namespace ReleasePackager
         {
             InitializeComponent();
 
-            configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
-            //SavePresets();
-            LoadPresets();
+            configDialog = new Config();
+            configDialog.FormClosed += CbPresets_Refresh;
+
+            if (!File.Exists(configDialog.ConfigFilePath))
+            {
+                var presets = configDialog.CreatePresets();
+                configDialog.ConfigCollection = presets;
+                configDialog.WriteConfig();
+            }
+            configDialog.LoadConfig();
 
             otherFolders = new List<FolderCopyConfig> {
                 new FolderCopyConfig { FolderName = "Interface", IncludeInBsa = true },
@@ -57,50 +64,44 @@ namespace ReleasePackager
             };
 
             cbPresets.DisplayMember = "ModName";
-            cbPresets.ValueMember = "ModName";
-            cbPresets.DataSource = config.ModSetups;
+            cbPresets.ValueMember = "Id";
+            CbPresets_Refresh(null, null);
             cbPresets.SelectedIndexChanged += CbPresets_SelectedIndexChanged;
             tbOutput.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "packTest");
         }
 
+        private void CbPresets_Refresh(object sender, EventArgs e)
+        {
+            var currentId = (cbPresets.SelectedItem as ModSetup)?.Id;
+            cbPresets.Items.Clear();
+            cbPresets.Items.Add(new ModSetup { ModName = "No Preset" });
+            foreach (var modSetup in configDialog.ConfigCollection.ModSetups.Where(x => !string.IsNullOrEmpty(x.ModName)))
+            {
+                cbPresets.Items.Add(modSetup);
+            }
+            cbPresets.Refresh();
+
+            cbPresets.SelectedItem = configDialog.ConfigCollection.ModSetups.SingleOrDefault(x => x.Id == currentId);
+        }
+
         private void CbPresets_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var item = ((ComboBox)sender).SelectedItem as ModSetup;
-            tbZipName.Text = item?.ZipName;
-            tbSource.Text = item?.SourcePath;
-            if (item?.GameName != null)
-            {
-                GameSetup gameSetup = null;
-                foreach (var setup in config.GameSetups)
-                {
-                    if (setup.GameName == item?.GameName)
-                    {
-                        gameSetup = setup;
-                        break;
-                    }
-                }
-                if (gameSetup?.GamePath != null)
-                {
-                    tbGamePath.Text = gameSetup?.GamePath;
-                }
-                if (gameSetup?.ArchiverPath != null)
-                {
-                    tbArchiverPath.Text = gameSetup?.ArchiverPath;
-                }
-                if (gameSetup?.OutputPath != null)
-                {
-                    tbOutput.Text = gameSetup?.OutputPath;
-                }
-            }
-            cbMainEspName.DataSource = PopulateEsps(tbSource.Text);
-            cbMainEspName.SelectedIndex = item.MainEspIndex <= (cbMainEspName.Items.Count - 1) ? item.MainEspIndex : -1;
+            var mod = cbPresets.SelectedItem as ModSetup;
+            var game = configDialog.ConfigCollection.GameSetups.SingleOrDefault(x => x.Id == mod?.GameId);
+
+            tbSource.Text = mod?.SourcePath;
+            cbMainEspName.DataSource = configDialog.PopulateEsps(tbSource.Text);
+            cbMainEspName.SelectedIndex = mod.MainEspIndex <= (cbMainEspName.Items.Count - 1) ? mod.MainEspIndex : -1;
+            tbOutput.Text = mod?.OutputPath;
+            tbZipName.Text = mod?.ZipName;
+
+            tbGamePath.Text = game?.GamePath;
+            tbArchiverPath.Text = game?.ArchiverPath;
         }
 
         private void btnConfig_Click(object sender, EventArgs e)
         {
-            var config = new Config();
-            var dr = config.ShowDialog();
-            config.Dispose();
+            var dr = configDialog.ShowDialog();
         }
 
         private void btnSourcePath_Click(object sender, EventArgs e) => pathSelect(tbSource);
@@ -182,29 +183,6 @@ namespace ReleasePackager
                 AddProgress("OH NOES! Problem while processing.. ");
                 AddProgress(ex.Message);
             }
-        }
-
-        private List<KeyValuePair<int, string>> PopulateEsps(string sourceDirName)
-        {
-            var items = new List<KeyValuePair<int, string>>();
-            string[] files;
-            try
-            {
-                files = Directory.GetFiles(sourceDirName, "*.esp");
-            }
-            catch (Exception ex)
-            {
-                AddProgress("Error getting esp files: " + ex.Message);
-                return items;
-            }
-
-            for (int i = 0; i < files.Length; i++)
-            {
-                var filename = Path.GetFileNameWithoutExtension(files[i]);
-                items.Add(new KeyValuePair<int, string>(i, filename));
-            }
-
-            return items;
         }
 
         private void CopyEsps()
@@ -554,97 +532,6 @@ namespace ReleasePackager
                 }
             }
 
-        }
-
-        private void LoadPresets()
-        {
-            var configCollection = new ConfigCollection();
-
-            using (var fileStream = File.OpenRead(configFilePath))
-            {
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ConfigCollection));
-
-                using (var stream = new MemoryStream())
-                {
-                    fileStream.CopyTo(stream);
-                    stream.Seek(0, SeekOrigin.Begin);
-                    configCollection = (ConfigCollection)ser.ReadObject(stream);
-                }
-            }
-
-            config = configCollection;
-        }
-
-        private void SavePresets()
-        {
-            var modSetupCollection = new ConfigCollection
-            {
-                GameSetups = new List<GameSetup>
-                {
-                    new GameSetup
-                    {
-                        GameName = "Skyrim",
-                        GamePath = @"G:\Steam\SteamApps\common\Skyrim",
-                        ArchiverPath = @"G:\Steam\SteamApps\common\Skyrim",
-                        OutputPath = @"C:\Users\Ben\Desktop\packTest"
-                    },
-                    new GameSetup
-                    {
-                        GameName = "Skyrim SE",
-                        GamePath = @"H:\Steam\steamapps\common\Skyrim Special Edition",
-                        ArchiverPath = @"H:\Steam\steamapps\common\Skyrim Special Edition\Tools\Archive",
-                        OutputPath = @"C:\Users\Ben\Desktop\packTest"
-                    }
-                },
-                ModSetups = new List<ModSetup>
-                {
-                    new ModSetup(),
-                    new ModSetup
-                    {
-                        GameName = "Skyrim",
-                        ModName = "Arrow Sheaves",
-                        MainEspIndex = 0,
-                        ZipName = "Arrow Sheaves",
-                        SourcePath = @"F:\Games Work\Skyrim\Arrow Sheaves\mod"
-                    },
-                    new ModSetup
-                    {
-                        GameName = "Skyrim",
-                        ModName = "Poisoning Extended",
-                        MainEspIndex = 0,
-                        ZipName = "Poisoning Extended",
-                        SourcePath = @"F:\Games Work\Skyrim\Poisoning Extended\mod"
-                    },
-                    new ModSetup
-                    {
-                        GameName = "Skyrim",
-                        ModName = "Follower Potions",
-                        MainEspIndex = 0,
-                        ZipName = "Follower Potions",
-                        SourcePath = @"F:\Games Work\Skyrim\Follower Potions\mod"
-                    },
-                    new ModSetup
-                    {
-                        GameName = "Skyrim SE",
-                        ModName = "Poisoning Extended SE",
-                        MainEspIndex = 0,
-                        ZipName = "Poisoning Extended",
-                        SourcePath = @"F:\Games Work\Skyrim\Poisoning Extended SE\mod"
-                    }
-                }
-            };
-
-            using (var stream = new MemoryStream())
-            {
-                DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(ConfigCollection));
-                ser.WriteObject(stream, config);
-
-                using (var fileStream = File.Create(configFilePath))
-                {
-                    stream.Seek(0, SeekOrigin.Begin);
-                    stream.CopyTo(fileStream);
-                }
-            }
         }
 
 

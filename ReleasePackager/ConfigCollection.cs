@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ReleasePackager
@@ -17,6 +18,9 @@ namespace ReleasePackager
     public class GameSetup
     {
         [DataMember]
+        public Guid Id { get; set; }
+
+        [DataMember]
         public string GameName { get; set; }
 
         [DataMember]
@@ -24,16 +28,16 @@ namespace ReleasePackager
 
         [DataMember]
         public string ArchiverPath { get; set; }
-
-        [DataMember]
-        public string OutputPath { get; set; }
     }
 
     [DataContract]
     public class ModSetup
     {
         [DataMember]
-        public string GameName { get; set; }
+        public Guid Id { get; set; }
+
+        [DataMember]
+        public Guid GameId { get; set; }
 
         [DataMember]
         public string ModName { get; set; }
@@ -46,5 +50,8 @@ namespace ReleasePackager
 
         [DataMember]
         public string SourcePath { get; set; }
+
+        [DataMember]
+        public string OutputPath { get; set; }
     }
 }

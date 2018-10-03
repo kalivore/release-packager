@@ -58,7 +58,7 @@
             // 
             this.tbSource.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSource.Location = new System.Drawing.Point(83, 105);
+            this.tbSource.Location = new System.Drawing.Point(83, 78);
             this.tbSource.Name = "tbSource";
             this.tbSource.Size = new System.Drawing.Size(447, 20);
             this.tbSource.TabIndex = 2;
@@ -66,7 +66,7 @@
             // btnSourcePath
             // 
             this.btnSourcePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSourcePath.Location = new System.Drawing.Point(536, 103);
+            this.btnSourcePath.Location = new System.Drawing.Point(536, 76);
             this.btnSourcePath.Name = "btnSourcePath";
             this.btnSourcePath.Size = new System.Drawing.Size(24, 23);
             this.btnSourcePath.TabIndex = 3;
@@ -77,7 +77,7 @@
             // lblSource
             // 
             this.lblSource.AutoSize = true;
-            this.lblSource.Location = new System.Drawing.Point(12, 108);
+            this.lblSource.Location = new System.Drawing.Point(12, 81);
             this.lblSource.Name = "lblSource";
             this.lblSource.Size = new System.Drawing.Size(65, 13);
             this.lblSource.TabIndex = 2;
@@ -169,7 +169,7 @@
             // lblMainEspName
             // 
             this.lblMainEspName.AutoSize = true;
-            this.lblMainEspName.Location = new System.Drawing.Point(12, 80);
+            this.lblMainEspName.Location = new System.Drawing.Point(12, 108);
             this.lblMainEspName.Name = "lblMainEspName";
             this.lblMainEspName.Size = new System.Drawing.Size(54, 13);
             this.lblMainEspName.TabIndex = 2;
@@ -186,6 +186,7 @@
             // 
             // cbPresets
             // 
+            this.cbPresets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbPresets.FormattingEnabled = true;
             this.cbPresets.Location = new System.Drawing.Point(83, 21);
             this.cbPresets.Name = "cbPresets";
@@ -195,19 +196,19 @@
             // lblZipName
             // 
             this.lblZipName.AutoSize = true;
-            this.lblZipName.Location = new System.Drawing.Point(291, 79);
+            this.lblZipName.Location = new System.Drawing.Point(281, 108);
             this.lblZipName.Name = "lblZipName";
-            this.lblZipName.Size = new System.Drawing.Size(57, 13);
+            this.lblZipName.Size = new System.Drawing.Size(88, 13);
             this.lblZipName.TabIndex = 2;
-            this.lblZipName.Text = "Output Zip";
+            this.lblZipName.Text = "Output Zip Name";
             // 
             // tbZipName
             // 
             this.tbZipName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbZipName.Location = new System.Drawing.Point(354, 77);
+            this.tbZipName.Location = new System.Drawing.Point(375, 105);
             this.tbZipName.Name = "tbZipName";
-            this.tbZipName.Size = new System.Drawing.Size(176, 20);
+            this.tbZipName.Size = new System.Drawing.Size(155, 20);
             this.tbZipName.TabIndex = 1;
             // 
             // cbMainEspName
@@ -217,9 +218,9 @@
             this.cbMainEspName.DisplayMember = "Value";
             this.cbMainEspName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbMainEspName.FormattingEnabled = true;
-            this.cbMainEspName.Location = new System.Drawing.Point(83, 76);
+            this.cbMainEspName.Location = new System.Drawing.Point(83, 104);
             this.cbMainEspName.Name = "cbMainEspName";
-            this.cbMainEspName.Size = new System.Drawing.Size(186, 21);
+            this.cbMainEspName.Size = new System.Drawing.Size(192, 21);
             this.cbMainEspName.TabIndex = 10;
             this.cbMainEspName.ValueMember = "Key";
             // 
